@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <cstdint>
+#include <cinttypes>
 #include <format>
 #include <fstream>
 #include <iterator>
@@ -47,8 +47,9 @@ int main(int argc, char** argv)
 
     uint32_t xmas_count                  = 0;
     auto     check_and_update_xmas_count = [&xmas_count](std::string const& a_word) {
-        constexpr char const* xmas_word = "XMAS";
-        if ((a_word == xmas_word) || (std::string(a_word.rbegin(), a_word.rend()) == xmas_word))
+        std::string xmas_word = "XMAS";
+
+        if (std::ranges::equal(a_word, xmas_word) || std::ranges::equal(a_word | std::views::reverse, xmas_word))
         {
             ++xmas_count;
         }
