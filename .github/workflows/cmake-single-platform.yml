@@ -1,0 +1,41 @@
+name: GCC 13 Build
+
+# Trigger the workflow on push to the main branch or pull requests
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Use the latest Ubuntu runner
+
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Set up GCC 13
+      - name: Set up GCC 13
+        run: |
+          sudo apt install software-properties-common
+          sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+          sudo apt-get update
+          sudo apt install gcc-13 g++-13 -y
+
+      # Set GCC 13 as the default compiler
+      - name: Set GCC 13 as default
+        run: |
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
+          sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+          gcc --version  # Check GCC version
+      # Build the project
+      - name: Build project
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make
